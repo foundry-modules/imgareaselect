@@ -12,7 +12,7 @@ premake:
 	mkdir -p ${PRODUCTION_DIR}/imgareaselect
 
 body:
-	${MODULARIZE} -n "imgareaselect" jquery.imgareaselect.dev.js > ${DEVELOPMENT_DIR}/imgareaselect.js
+	${MODULARIZE} -n "imgareaselect" -css "imgareaselect/default" jquery.imgareaselect.dev.js > ${DEVELOPMENT_DIR}/imgareaselect.js
 	cp distfiles/css/*.gif ${DEVELOPMENT_DIR}/imgareaselect/
 	cp distfiles/css/imgareaselect-animated.css ${DEVELOPMENT_DIR}/imgareaselect/animated.css
 	cp distfiles/css/imgareaselect-default.css ${DEVELOPMENT_DIR}/imgareaselect/default.css
