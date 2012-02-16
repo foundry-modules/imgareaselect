@@ -1,34 +1,30 @@
-SOURCE=jquery.imgareaselect.dev.js
-BASIC=$(SOURCE:.dev.js=.js)
-MINIFIED=$(BASIC:.js=.min.js)
-PACKED=$(BASIC:.js=.pack.js)
+FOUNDRY_DIR = ../..
+PRODUCTION_DIR = ${FOUNDRY_DIR}/scripts
+DEVELOPMENT_DIR = ${FOUNDRY_DIR}/scripts_
+MODULARIZE = ${FOUNDRY_DIR}/build/modularize
+UGLIFY = uglifyjs --unsafe -nc
+UGLIFYCSS = uglifycss
 
-VERSION=$(shell head $(SOURCE) | perl -ne '/version ([0-9.]+)/?{print $$1}:0')
-RELEASE=$(BASIC:.js=-$(VERSION))
+all: premake body min
 
-all: $(BASIC) $(MINIFIED) $(PACKED)
+premake:
+	mkdir -p ${DEVELOPMENT_DIR}/imgareaselect
+	mkdir -p ${PRODUCTION_DIR}/imgareaselect
 
-$(BASIC): $(SOURCE)
-	../../tools/strip-comments-simple.pl $< > $@
+body:
+	${MODULARIZE} -n "imgareaselect" jquery.imgareaselect.dev.js > ${DEVELOPMENT_DIR}/imgareaselect.js
+	cp distfiles/css/*.gif ${DEVELOPMENT_DIR}/imgareaselect/
+	cp distfiles/css/imgareaselect-animated.css ${DEVELOPMENT_DIR}/imgareaselect/animated.css
+	cp distfiles/css/imgareaselect-default.css ${DEVELOPMENT_DIR}/imgareaselect/default.css
 
-$(MINIFIED): $(BASIC)
-	cat $< | perl -I ../../tools/packer2.perl -- \
-		../../tools/packer2.perl/jsPacker.michal.pl -q -e0 > $@
-
-$(PACKED): $(BASIC)
-	java -cp ../../tools -jar ../../tools/shrinksafe.jar $< \
-		| perl -I ../../tools/packer2.perl -- \
-		../../tools/packer2.perl/jsPacker.michal.pl -q -e62 > $@
-
-dist: $(BASIC) $(MINIFIED) $(PACKED)
-	rm -rf "dist/$(RELEASE)" "dist/$(RELEASE).zip"
-	mkdir -p "dist/$(RELEASE)"
-	cp -r distfiles/* "dist/$(RELEASE)"
-	mkdir -p "dist/$(RELEASE)/scripts"
-	cp "$(BASIC)" "$(MINIFIED)" "$(PACKED)" "dist/$(RELEASE)/scripts"
-	cd dist && \
-		zip -r "$(RELEASE).zip" "$(RELEASE)" && \
-		cd -
+min:
+	${UGLIFY} ${DEVELOPMENT_DIR}/imgareaselect.js > ${PRODUCTION_DIR}/imgareaselect.js
+	cp distfiles/css/*.gif ${PRODUCTION_DIR}/imgareaselect/
+	${UGLIFYCSS} distfiles/css/imgareaselect-animated.css > ${PRODUCTION_DIR}/imgareaselect/animated.css
+	${UGLIFYCSS} distfiles/css/imgareaselect-default.css > ${PRODUCTION_DIR}/imgareaselect/default.css
 
 clean:
-	rm "$(BASIC)" "$(MINIFIED)" "$(PACKED)"
+	rm -fr ${DEVELOPMENT_DIR}/imgareaselect.js
+	rm -fr ${DEVELOPMENT_DIR}/imgareaselect
+	rm -fr ${PRODUCTION_DIR}/imgareaselect.js
+	rm -fr ${PRODUCTION_DIR}/imgareaselect
