@@ -1,30 +1,35 @@
-FOUNDRY_DIR = ../..
-PRODUCTION_DIR = ${FOUNDRY_DIR}/scripts
-DEVELOPMENT_DIR = ${FOUNDRY_DIR}/scripts_
-MODULARIZE = ${FOUNDRY_DIR}/build/modularize
-UGLIFY = uglifyjs --unsafe -nc
-UGLIFYCSS = uglifycss
+include ../../build/modules.mk
+
+MODULE = imgareaselect
+FILENAME = ${MODULE}.js
+
+SOURCE = jquery.imgareaselect.dev.js
+
+PRODUCTION = ${PRODUCTION_DIR}/${FILENAME}
+DEVELOPMENT = ${DEVELOPMENT_DIR}/${FILENAME}
+PRODUCTION_FOLDER = ${PRODUCTION_DIR}/${MODULE}
+DEVELOPMENT_FOLDER = ${DEVELOPMENT_DIR}/${MODULE}
 
 all: premake body min
 
 premake:
-	mkdir -p ${DEVELOPMENT_DIR}/imgareaselect
-	mkdir -p ${PRODUCTION_DIR}/imgareaselect
+	mkdir -p ${DEVELOPMENT_FOLDER}
+	mkdir -p ${PRODUCTION_FOLDER}
 
 body:
-	${MODULARIZE} -n "imgareaselect" -css "imgareaselect/default" jquery.imgareaselect.dev.js > ${DEVELOPMENT_DIR}/imgareaselect.js
-	cp distfiles/css/*.gif ${DEVELOPMENT_DIR}/imgareaselect/
-	cp distfiles/css/imgareaselect-animated.css ${DEVELOPMENT_DIR}/imgareaselect/animated.css
-	cp distfiles/css/imgareaselect-default.css ${DEVELOPMENT_DIR}/imgareaselect/default.css
+	${MODULARIZE} -n "${MODULE}" -css "imgareaselect/default" ${SOURCE} > ${DEVELOPMENT}
+	cp distfiles/css/*.gif ${DEVELOPMENT_FOLDER}/
+	cp distfiles/css/imgareaselect-animated.css ${DEVELOPMENT_FOLDER}/animated.css
+	cp distfiles/css/imgareaselect-default.css ${DEVELOPMENT_FOLDER}/default.css
 
 min:
-	${UGLIFY} ${DEVELOPMENT_DIR}/imgareaselect.js > ${PRODUCTION_DIR}/imgareaselect.js
-	cp distfiles/css/*.gif ${PRODUCTION_DIR}/imgareaselect/
-	${UGLIFYCSS} distfiles/css/imgareaselect-animated.css > ${PRODUCTION_DIR}/imgareaselect/animated.css
-	${UGLIFYCSS} distfiles/css/imgareaselect-default.css > ${PRODUCTION_DIR}/imgareaselect/default.css
+	${UGLIFYJS} ${DEVELOPMENT} > ${PRODUCTION}
+	cp distfiles/css/*.gif ${PRODUCTION_FOLDER}/
+	${UGLIFYCSS} distfiles/css/imgareaselect-animated.css > ${PRODUCTION_FOLDER}/animated.css
+	${UGLIFYCSS} distfiles/css/imgareaselect-default.css > ${PRODUCTION_FOLDER}/default.css
 
 clean:
-	rm -fr ${DEVELOPMENT_DIR}/imgareaselect.js
-	rm -fr ${DEVELOPMENT_DIR}/imgareaselect
-	rm -fr ${PRODUCTION_DIR}/imgareaselect.js
-	rm -fr ${PRODUCTION_DIR}/imgareaselect
+	rm -fr ${DEVELOPMENT}
+	rm -fr ${DEVELOPMENT_FOLDER}
+	rm -fr ${PRODUCTION}
+	rm -fr ${PRODUCTION_FOLDER}
