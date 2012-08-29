@@ -17,7 +17,7 @@ premake:
 	mkdir -p ${PRODUCTION_FOLDER}
 
 body:
-	${MODULARIZE} -n "${MODULE}" -css "imgareaselect/default" ${SOURCE} > ${DEVELOPMENT}
+	${MODULARIZE} -jq -n "${MODULE}" -css "imgareaselect/default" ${SOURCE} > ${DEVELOPMENT}
 	cp distfiles/css/*.gif ${DEVELOPMENT_FOLDER}/
 	cp distfiles/css/imgareaselect-animated.css ${DEVELOPMENT_FOLDER}/animated.css
 	cp distfiles/css/imgareaselect-default.css ${DEVELOPMENT_FOLDER}/default.css
