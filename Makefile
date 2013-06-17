@@ -1,35 +1,17 @@
+all: modularize-script minify-script copy-styles minify-styles lessify-styles copy-assets
+
 include ../../build/modules.mk
 
 MODULE = imgareaselect
-FILENAME = ${MODULE}.js
+MODULARIZE_OPTIONS = -jq
 
-SOURCE = jquery.imgareaselect.dev.js
+SOURCE_SCRIPT_FOLDER = .
+SOURCE_SCRIPT_FILE_SUFFIX = .dev.js
 
-PRODUCTION = ${PRODUCTION_DIR}/${FILENAME}
-DEVELOPMENT = ${DEVELOPMENT_DIR}/${FILENAME}
-PRODUCTION_FOLDER = ${PRODUCTION_DIR}/${MODULE}
-DEVELOPMENT_FOLDER = ${DEVELOPMENT_DIR}/${MODULE}
+SOURCE_STYLE_FOLDER = distfiles/css
+SOURCE_STYLE_FILES = animated default
+SOURCE_STYLE_FILE_PREFIX = imgareaselect-
 
-all: premake body min
+SOURCE_ASSET_FILES = ${SOURCE_STYLE_FOLDER}/*.gif
 
-premake:
-	mkdir -p ${DEVELOPMENT_FOLDER}
-	mkdir -p ${PRODUCTION_FOLDER}
-
-body:
-	${MODULARIZE} -jq -n "${MODULE}" -css "imgareaselect/default" ${SOURCE} > ${DEVELOPMENT}
-	cp distfiles/css/*.gif ${DEVELOPMENT_FOLDER}/
-	cp distfiles/css/imgareaselect-animated.css ${DEVELOPMENT_FOLDER}/animated.css
-	cp distfiles/css/imgareaselect-default.css ${DEVELOPMENT_FOLDER}/default.css
-
-min:
-	${UGLIFYJS} ${DEVELOPMENT} > ${PRODUCTION}
-	cp distfiles/css/*.gif ${PRODUCTION_FOLDER}/
-	${UGLIFYCSS} distfiles/css/imgareaselect-animated.css > ${PRODUCTION_FOLDER}/animated.css
-	${UGLIFYCSS} distfiles/css/imgareaselect-default.css > ${PRODUCTION_FOLDER}/default.css
-
-clean:
-	rm -fr ${DEVELOPMENT}
-	rm -fr ${DEVELOPMENT_FOLDER}
-	rm -fr ${PRODUCTION}
-	rm -fr ${PRODUCTION_FOLDER}
+TARGET_STYLE_LESS_CONVERTER = sed 's/url(/url(@{foundry_uri}\/imgareaselect\//g'
