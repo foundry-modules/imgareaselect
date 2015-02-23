@@ -20,7 +20,12 @@
 var abs = Math.abs,
     max = Math.max,
     min = Math.min,
-    round = Math.round;
+    // FOUNDRY_HACK
+    // Prevent rounding of figures
+    // round = Math.round;
+    round = function(n){ return n; };
+
+
 
 /**
  * Create a new HTML div element
